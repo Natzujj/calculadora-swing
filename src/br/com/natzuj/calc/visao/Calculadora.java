@@ -11,6 +11,7 @@ public class Calculadora extends JFrame {
 
         organizarLayout();
 
+        // setUndecorated(true); //Remover barra de navegação
         setSize(232, 322);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
