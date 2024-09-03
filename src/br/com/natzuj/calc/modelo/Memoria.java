@@ -6,7 +6,7 @@ import java.util.List;
 public class Memoria {
 
     private enum TipoComando{
-        ZERAR, NUMERO, DIVISAO, MULTIPLICACAO, SUBTRACAO, SOMA, IGUAL, VIRGULA;
+        ZERAR, NUMERO, DIVISAO, MULTIPLICACAO, SUBTRACAO, SOMA, IGUAL, VIRGULA, NEGAR;
     };
 
     private static final Memoria instancia = new Memoria();
@@ -46,7 +46,11 @@ public class Memoria {
         } else if (tipoComando == TipoComando.NUMERO || tipoComando == TipoComando.VIRGULA) {
             textoAtual = substituir ? texto : textoAtual + texto;
             substituir = false;
-        } else {
+        }else if (tipoComando == TipoComando.NEGAR) {
+            if (!"0".equals(textoAtual)) {
+                textoAtual = textoAtual.startsWith("-") ? textoAtual.substring(1) : "-" + textoAtual;
+            }
+        }else {
             substituir = true;
             textoAtual = obterResultadoOperacao();
             textoBuffer = textoAtual;
@@ -58,7 +62,7 @@ public class Memoria {
     }
 
     private String obterResultadoOperacao() {
-        if (ultimaOperacao == null) {
+        if (ultimaOperacao == null || ultimaOperacao == TipoComando.IGUAL) {
             return textoAtual;
         }
 
@@ -73,7 +77,9 @@ public class Memoria {
         }else if(ultimaOperacao == TipoComando.MULTIPLICACAO){
             resultado = numeroBuffer * numeroAtual;
         } else if (ultimaOperacao == TipoComando.DIVISAO) {
-            resultado = numeroBuffer - numeroAtual;
+            resultado = numeroBuffer / numeroAtual;
+        } else if (ultimaOperacao == TipoComando.NEGAR) {
+            resultado = numeroAtual * -1;
         }
         String resultadoString = Double.toString(resultado).replace(".", ",");
         boolean inteiro = resultadoString.endsWith(",0");
@@ -92,6 +98,10 @@ public class Memoria {
             //Quando nao for numero..
             if ("AC".equalsIgnoreCase(texto)) {
                 return TipoComando.ZERAR;
+            } else if ("+/-".equals(texto)) {
+                if (!"0".equals(getTextoAtual())) {
+                    return TipoComando.NEGAR;
+                }
             }else if ("/".equals(texto)) {
                 return TipoComando.DIVISAO;
             }else if ("x".equalsIgnoreCase(texto)) {
@@ -104,7 +114,7 @@ public class Memoria {
                 return TipoComando.IGUAL;
             }else if (",".equals(texto) && !textoAtual.contains(",")) {
                 return TipoComando.VIRGULA;
-            }        
+            }
         }
 
         return null;
