@@ -6,7 +6,7 @@ import java.util.List;
 public class Memoria {
 
     private enum TipoComando{
-        ZERAR, NUMERO, DIVISAO, MULTIPLICACAO, SUBTRACAO, SOMA, IGUAL, VIRGULA, NEGAR;
+        ZERAR, NUMERO, DIVISAO, MULTIPLICACAO, SUBTRACAO, SOMA, IGUAL, VIRGULA, NEGAR, PORCENTAGEM;
     };
 
     private static final Memoria instancia = new Memoria();
@@ -80,6 +80,8 @@ public class Memoria {
             resultado = numeroBuffer / numeroAtual;
         } else if (ultimaOperacao == TipoComando.NEGAR) {
             resultado = numeroAtual * -1;
+        } else if (ultimaOperacao == TipoComando.PORCENTAGEM) {
+            resultado = (numeroBuffer * numeroAtual) / 100;
         }
         String resultadoString = Double.toString(resultado).replace(".", ",");
         boolean inteiro = resultadoString.endsWith(",0");
@@ -114,6 +116,8 @@ public class Memoria {
                 return TipoComando.IGUAL;
             }else if (",".equals(texto) && !textoAtual.contains(",")) {
                 return TipoComando.VIRGULA;
+            }else if ("%".equals(texto)) {
+                return TipoComando.PORCENTAGEM;
             }
         }
 
